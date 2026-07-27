@@ -53,7 +53,7 @@ class FenetreProgramme(QWidget):
         self.especes = []  # liste de dicts après analyse + résolution des propriétés
         self._construire_ui()
 
-    def _construire_ui(self):
+    def _construire_ui(self):   # fenetre
         self.setWindowTitle(TITRE_PROGRAMME)
         self.resize(780, 580)
 
@@ -93,6 +93,7 @@ class FenetreProgramme(QWidget):
         self.tableau.setHorizontalHeaderLabels(
             ["Rôle", "Coeff.", "Composé (saisi)", "Formule", "M (g/mol)", "Quantité calculée"]
         )
+        
         self.tableau.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.tableau.setEditTriggers(QTableWidget.NoEditTriggers)
         layout.addWidget(self.tableau, stretch=1)
