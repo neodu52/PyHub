@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Calculateur de quantité de réactif",
+  "description": "Calcule le volume et la masse de réactif nécessaire pour une réaction chimique.",
+  "fichier": "main.py"
+}
