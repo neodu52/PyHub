@@ -9,3 +9,5 @@ inclure des BDD pour une majorité de chose :
 un viewer 3D des molécules ou des proteine
 
 Un programme qui équilibre automatiquement les réactions
+
+la possibilité de lancer des fichier exe
