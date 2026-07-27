@@ -1,0 +1,11 @@
+inclure des BDD pour une majorité de chose : 
+    tableau periodique (avec isotope si possible), 
+    materiaux(aluminium 6061, acier 316, inconel etc), 
+    les spectres (donée par exemple un spectre (IR, Raman, UV-Visible, RMN, Masse) et le logiciel nous donne le ou les matiriaux), 
+    contante physique
+    pour les gens de la SVT un BDD sur les proteine
+    meteo pour ce qui aimerais ça
+
+un viewer 3D des molécules ou des proteine
+
+Un programme qui équilibre automatiquement les réactions

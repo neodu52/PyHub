@@ -143,8 +143,7 @@ Dépendance supplémentaire pour ce programme : `requests`
 
 ### `Quantite_reactif` — votre propre calculateur
 
-`categories/Chimie/Quantite_reactif/` est le programme que vous avez
-écrit à partir du template : à partir d'une masse de produit visée, il
+`categories/Chimie/Quantite_reactif/` à partir d'une masse de produit visée, il
 calcule la masse et le volume de deux réactifs. Une seule précision a été
 ajoutée en commentaire dans `calculer()` : le calcul suppose que le
 **produit** a un coefficient de 1 dans l'équation bilan (les coefficients
