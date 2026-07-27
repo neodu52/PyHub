@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Calculateur de dilution (C1V1 = C2V2)",
+  "description": "Calcule le volume de solvant à ajouter pour atteindre une concentration cible.",
+  "fichier": "main.py"
+}

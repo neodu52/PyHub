@@ -1,0 +1,5 @@
+PyQt5>=5.15
+
+# Utilisées uniquement par certains programmes d'exemple :
+numpy>=1.20          # exemple Physique (chute libre)
+matplotlib>=3.5       # exemple Ingénierie (graphique du moment fléchissant)

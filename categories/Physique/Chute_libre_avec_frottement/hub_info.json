@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Chute libre (avec frottement de l'air)",
+  "description": "Temps de chute et vitesse d'impact, avec et sans frottement de l'air.",
+  "fichier": "main.py"
+}

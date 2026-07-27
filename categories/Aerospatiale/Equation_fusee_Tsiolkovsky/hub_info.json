@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Équation de Tsiolkovsky",
+  "description": "Delta-v disponible et masse d'ergols nécessaire pour une fusée.",
+  "fichier": "main.py"
+}
