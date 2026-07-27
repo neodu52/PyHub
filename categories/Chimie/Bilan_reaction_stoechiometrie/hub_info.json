@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Bilan de réaction (stœchiométrie + PubChem)",
+  "description": "Équation bilan -> quantités (mol/g) de tous les composés. Interroge PubChem si besoin, avec mise en cache locale.",
+  "fichier": "main.py"
+}

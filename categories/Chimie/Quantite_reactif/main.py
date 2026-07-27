@@ -132,6 +132,15 @@ class FenetreProgramme(QWidget):
 # avec \n) qui sera affichée dans la zone de résultat.
 # ============================================================
 def calculer(valeurs):
+    # NOTE : ce calcul suppose que le PRODUIT a un coefficient de 1 dans
+    # l'équation bilan (quantite_premier_reactif / quantite_second_reactif
+    # représentent alors directement le nombre de mol de réactif par mol
+    # de produit). Si le produit a un coefficient différent de 1 dans votre
+    # équation (ex: "2 KClO3 -> 2 KCl + 3 O2"), divisez d'abord les
+    # coefficients des réactifs par celui du produit avant de les saisir
+    # ici (ex: 2/3 au lieu de 2). Le programme "Bilan_reaction_stoechiometrie"
+    # gère lui les coefficients quelconques automatiquement, à partir de
+    # l'équation complète.
     masse_molaire_produit = valeurs["masse_molaire_produit"]
     masse_final_produit_voulu = valeurs["masse_final_produit_voulu"]
     quantite_premier_reactif = valeurs["quantite_premier_reactif"]  # nombre de mol dans l'equation bilan

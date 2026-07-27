@@ -44,13 +44,22 @@ PyHub/
 ├── requirements.txt
 ├── templates/
 │   └── template_programme.py    # à copier pour créer un nouveau programme
+├── data/                         # dossier PARTAGÉ, ignoré par le hub (voir plus bas)
+│   ├── pubchem_utils.py           # module utilitaire : masse molaire d'un composé
+│   └── composes_locale.json       # cache local des composés déjà résolus
 └── categories/
     ├── Physique/
     │   └── Chute_libre_avec_frottement/
     │       ├── main.py
     │       └── hub_info.json
     ├── Chimie/
-    │   └── Dilution_C1V1_C2V2/
+    │   ├── Dilution_C1V1_C2V2/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   ├── Quantite_reactif/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Bilan_reaction_stoechiometrie/
     │       ├── main.py
     │       └── hub_info.json
     ├── Ingenierie/
@@ -62,6 +71,87 @@ PyHub/
             ├── main.py
             └── hub_info.json
 ```
+
+## Le dossier `data/` — ressources partagées entre programmes
+
+`data/` est volontairement **à la racine du hub, en dehors de `categories/`** :
+le hub ne scanne que `categories/`, donc rien dans `data/` n'apparaît jamais
+comme catégorie ou comme bouton. Ce dossier n'est utilisé que par vos
+`main.py`, qui vont y piocher des données ou des fonctions communes.
+
+Il contient aujourd'hui :
+
+- **`composes_locale.json`** — un cache de propriétés de composés chimiques
+  (masse molaire, formule, nom PubChem, CID). Il est pré-rempli avec
+  `acetone`, `O2`, `CO2`, `H2O` (et quelques synonymes) pour que l'exemple
+  ci-dessous fonctionne sans connexion.
+- **`pubchem_utils.py`** — un module Python *sans PyQt* qui expose une seule
+  fonction utile : `obtenir_proprietes(nom_ou_formule)`. Elle cherche
+  d'abord dans `composes_locale.json` ; si le composé est absent, elle
+  interroge automatiquement l'API PubChem (gratuite, sans clé), puis
+  **enregistre le résultat dans le cache** pour ne plus jamais avoir à
+  refaire la requête réseau pour ce composé.
+
+Pour utiliser ce module depuis un nouveau programme (où qu'il soit dans
+`categories/`), le pattern est toujours le même :
+
+```python
+import sys
+from pathlib import Path
+# remonte de main.py jusqu'à la racine PyHub/, puis descend dans data/
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "data"))
+import pubchem_utils as pc
+
+infos = pc.obtenir_proprietes("acetone")
+print(infos["masse_molaire"])   # 58.08
+print(infos["source"])          # "locale" ou "pubchem_nom" ou "pubchem_formule"
+```
+
+Ce même pattern (dossier `data/` + `sys.path.insert`) fonctionne pour
+n'importe quel autre fichier JSON ou module Python que vous voudriez
+partager entre plusieurs programmes (un futur `tableau_periodique.json`,
+une table de constantes physiques, etc.) : il suffit de l'ajouter dans
+`data/` et de l'importer/charger de la même façon depuis n'importe quel
+`main.py`.
+
+### Exemple : Bilan de réaction (stœchiométrie + PubChem)
+
+`categories/Chimie/Bilan_reaction_stoechiometrie/` illustre ce pattern.
+On y saisit une équation bilan avec des noms ou formules, par exemple :
+
+```
+1 acetone + 4 O2 = 3 CO2 + 3 H2O
+```
+
+On choisit ensuite une espèce dont on connaît la quantité (en mol ou en g),
+et le programme calcule automatiquement la quantité (mol + g) de toutes
+les autres espèces, à partir des coefficients réels de l'équation — y
+compris quand le coefficient du produit choisi n'est pas 1.
+
+Pour chaque composé de l'équation, le programme :
+1. regarde d'abord dans `data/composes_locale.json` ;
+2. si absent, interroge PubChem par nom, puis par formule brute en secours ;
+3. enregistre le résultat dans le cache local.
+
+Astuce : les noms anglais (`acetone`, `water`, `oxygen`) et les formules
+brutes (`CO2`, `NaCl`, `H2O`) sont les mieux reconnus par PubChem. Les noms
+français ne fonctionnent que s'ils font partie des synonymes connus de
+PubChem pour ce composé — sinon, préférez la formule ou le nom anglais.
+
+Dépendance supplémentaire pour ce programme : `requests`
+(déjà dans `requirements.txt`).
+
+### `Quantite_reactif` — votre propre calculateur
+
+`categories/Chimie/Quantite_reactif/` est le programme que vous avez
+écrit à partir du template : à partir d'une masse de produit visée, il
+calcule la masse et le volume de deux réactifs. Une seule précision a été
+ajoutée en commentaire dans `calculer()` : le calcul suppose que le
+**produit** a un coefficient de 1 dans l'équation bilan (les coefficients
+des réactifs que vous saisissez doivent alors être exprimés "par mol de
+produit"). Si ce n'est pas le cas dans votre réaction, `Bilan_reaction_stoechiometrie`
+(ci-dessus) gère lui n'importe quels coefficients directement depuis
+l'équation complète.
 
 ## Ajouter un nouveau programme
 

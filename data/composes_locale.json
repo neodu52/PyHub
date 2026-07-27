@@ -1,0 +1,82 @@
+{
+  "acetone": {
+    "ambigu": false,
+    "cid_pubchem": 180,
+    "formule": "C3H6O",
+    "masse_molaire": 58.08,
+    "nom_pubchem": "propan-2-one",
+    "nom_saisi": "acetone"
+  },
+  "co2": {
+    "ambigu": false,
+    "cid_pubchem": 280,
+    "formule": "CO2",
+    "masse_molaire": 44.01,
+    "nom_pubchem": "carbon dioxide",
+    "nom_saisi": "CO2"
+  },
+  "dioxyde de carbone": {
+    "ambigu": false,
+    "cid_pubchem": 280,
+    "formule": "CO2",
+    "masse_molaire": 44.01,
+    "nom_pubchem": "carbon dioxide",
+    "nom_saisi": "CO2"
+  },
+  "dioxygene": {
+    "ambigu": false,
+    "cid_pubchem": 977,
+    "formule": "O2",
+    "masse_molaire": 31.998,
+    "nom_pubchem": "oxygen",
+    "nom_saisi": "O2"
+  },
+  "eau": {
+    "ambigu": false,
+    "cid_pubchem": 962,
+    "formule": "H2O",
+    "masse_molaire": 18.015,
+    "nom_pubchem": "oxidane",
+    "nom_saisi": "H2O"
+  },
+  "h2o": {
+    "ambigu": false,
+    "cid_pubchem": 962,
+    "formule": "H2O",
+    "masse_molaire": 18.015,
+    "nom_pubchem": "oxidane",
+    "nom_saisi": "H2O"
+  },
+  "o2": {
+    "ambigu": false,
+    "cid_pubchem": 977,
+    "formule": "O2",
+    "masse_molaire": 31.998,
+    "nom_pubchem": "oxygen",
+    "nom_saisi": "O2"
+  },
+  "oxygene": {
+    "ambigu": false,
+    "cid_pubchem": 977,
+    "formule": "O2",
+    "masse_molaire": 31.998,
+    "nom_pubchem": "oxygen",
+    "nom_saisi": "O2"
+  },
+  "propanone": {
+    "ambigu": false,
+    "cid_pubchem": 180,
+    "formule": "C3H6O",
+    "masse_molaire": 58.08,
+    "nom_pubchem": "propan-2-one",
+    "nom_saisi": "acetone"
+  },
+  "water": {
+    "ambigu": false,
+    "cid_pubchem": 962,
+    "formule": "H2O",
+    "masse_molaire": 18.015,
+    "nom_pubchem": "oxidane",
+    "nom_saisi": "H2O"
+  }
+}
