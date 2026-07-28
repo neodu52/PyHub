@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Traction simple (matériau au choix)",
+  "description": "Contrainte, allongement et coefficient de sécurité pour une barre en traction, avec choix du matériau (data/materiaux.json).",
+  "fichier": "main.py"
+}

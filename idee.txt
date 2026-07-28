@@ -9,3 +9,6 @@ inclure des BDD pour une majorité de chose :
 un viewer 3D des molécules ou des proteine
 
 Un programme qui équilibre automatiquement les réactions
+
+barre de selctionn pour la bdd de chimie(par exemple quand on entre une équation bilan 1 acet + 4O2 = 4CO2 + 4H20, le logiciel nous propose des posibilité en fonction de ce qu'on écrit, si par exemple on commance a marqué prop le logiciel nous propose propane, propanol, propanal etc. Un peut comme une recherche google.)
+De mémé pour les matérieux

@@ -318,6 +318,8 @@ class FenetreProgramme(QWidget):
         self.label_solutions = QLabel("")
         self.label_solutions.setWordWrap(True)
         self.label_solutions.setStyleSheet("font-family: monospace;")
+        self.label_solutions.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+        self.label_solutions.setCursor(QCursor(Qt.IBeamCursor))
         layout.addWidget(self.label_solutions)
 
         # --- zone dynamique de saisie des valeurs numériques ---
@@ -338,6 +340,8 @@ class FenetreProgramme(QWidget):
         self.label_resultat = QLabel("")
         self.label_resultat.setWordWrap(True)
         self.label_resultat.setStyleSheet("font-size: 14px; font-weight: bold;")
+        self.label_resultat.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+        self.label_resultat.setCursor(QCursor(Qt.IBeamCursor))
         layout.addWidget(self.label_resultat)
 
     # ------------------------------------------------------------------

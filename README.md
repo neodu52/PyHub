@@ -79,7 +79,8 @@ PyHub/
 ├── data/                         # dossier PARTAGÉ, ignoré par le hub (voir plus bas)
 │   ├── pubchem_utils.py           # module utilitaire : masse molaire d'un composé (PubChem)
 │   ├── composes_locale.json       # cache local des composés déjà résolus par PubChem
-│   └── tableau_periodique.json    # les 118 éléments, complet, 100% hors-ligne
+│   ├── tableau_periodique.json    # les 118 éléments, complet, 100% hors-ligne
+│   └── materiaux.json             # propriétés mécaniques/thermiques de 33 matériaux
 └── categories/
     ├── Physique/
     │   ├── Chute_libre_avec_frottement/
@@ -102,7 +103,10 @@ PyHub/
     │       ├── main.py
     │       └── hub_info.json
     ├── Ingenierie/
-    │   └── Poutre_flexion_simple/
+    │   ├── Poutre_flexion_simple/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Traction_materiau/
     │       ├── main.py
     │       └── hub_info.json
     └── Aerospatiale/
@@ -259,15 +263,52 @@ comme de simples variables.
 
 Dépendance supplémentaire : `sympy` (déjà dans `requirements.txt`).
 
-## Simulation de gravité (c++)
+Petit plus : le texte des solutions isolées et du résultat numérique est
+maintenant sélectionnable/copiable à la souris (clic gauche + glisser),
+contrairement à un `QLabel` classique.
 
-Ceci est une simulationd de la gravité utilisant les lois de la gravité de Newton.
-Elle vous permet de crée des corps celestes représenté par des disques et de voire comment la gravité influ sur eux.
-En cliquant d'abord sur espace pour mettre la simulation en pose puis clique droit sur corp vous pourrez modifier
-ses parametres (taille, masse, couleur, véloicité, position)
-Vous pourrer aussi crée vos propres corps avec clique molette.
-Ce programme est directement tiré d'un autre de mes project intituler "2D-newtonian-gravity-sim"
-que vous pourrez retrouver [ici](https://github.com/neodu52/2D-newtonian-gravity-sim)
+## Base de données matériaux (`data/materiaux.json`)
+
+Même principe que le tableau périodique : un fichier complet et statique,
+100% hors-ligne. Il couvre 33 matériaux (métaux, polymères, céramiques,
+verre, béton, bois, composites), chacun avec :
+
+```json
+{
+  "nom": "Acier inoxydable 304",
+  "categorie": "métal",
+  "densite_kg_m3": 8000,
+  "module_young_GPa": 193,
+  "coefficient_poisson": 0.29,
+  "limite_elastique_MPa": 215,
+  "resistance_traction_MPa": 505,
+  "durete": "150 HB",
+  "conductivite_thermique_W_mK": 16.2,
+  "conductivite_electrique_S_m": 1450000.0,
+  "dilatation_thermique_ppm_K": 17.3
+}
+```
+
+⚠️ **Ce sont des valeurs typiques/indicatives** (références d'ingénierie
+courantes : Engineers Edge, Engineering Toolbox, tables MIT 3.11,
+Callister), pas des données de fiche technique certifiée — la nuance
+exacte, le traitement thermique ou le grade d'un matériau réel font
+varier ces valeurs. Pour un usage critique ou professionnel, vérifiez
+toujours auprès du fournisseur. `limite_elastique_MPa` est `null` pour
+les matériaux fragiles qui ne "cèdent" pas plastiquement (céramiques,
+verre, béton) — utilisez plutôt `resistance_traction_MPa` (résistance en
+flexion/rupture) pour ceux-là. `durete` combine valeur et échelle
+(HB, Shore D/A, Mohs selon le type de matériau) dans une même chaîne,
+faute d'échelle unique commune à tous les matériaux.
+
+### Exemple : `Traction_materiau`
+
+`categories/Ingenierie/Traction_materiau/` illustre l'usage de cette base :
+choisissez un matériau dans le menu déroulant (ses propriétés s'affichent
+automatiquement), donnez une force, une section et une longueur, et
+obtenez la contrainte (σ = F/A), l'allongement (loi de Hooke,
+ΔL = (σ/E) × L0), et le coefficient de sécurité par rapport à la limite
+élastique du matériau choisi.
 
 ## Ajouter un nouveau programme
 
