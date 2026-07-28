@@ -261,13 +261,13 @@ Dépendance supplémentaire : `sympy` (déjà dans `requirements.txt`).
 
 ## Simulation de gravité (c++)
 
-Ceci est une simulationd e la gravité utilisant les lois de la gravité de Newton.
-Elle vous permet de crée des corp celeste représenté par des disques et de voire comment la gravité influ sur eux.
+Ceci est une simulationd de la gravité utilisant les lois de la gravité de Newton.
+Elle vous permet de crée des corps celestes représenté par des disques et de voire comment la gravité influ sur eux.
 En cliquant d'abord sur espace pour mettre la simulation en pose puis clique droit sur corp vous pourrez modifier
-ses parametre (taille, masse, couleur, véloicité, position)
+ses parametres (taille, masse, couleur, véloicité, position)
 Vous pourrer aussi crée vos propres corps avec clique molette.
 Ce programme est directement tiré d'un autre de mes project intituler "2D-newtonian-gravity-sim"
-que vous pourrez retrouver [text](https://github.com/neodu52/2D-newtonian-gravity-sim)
+que vous pourrez retrouver [ici](https://github.com/neodu52/2D-newtonian-gravity-sim)
 
 ## Ajouter un nouveau programme
 
