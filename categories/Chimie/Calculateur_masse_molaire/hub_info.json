@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Calculateur de masse molaire",
+  "description": "Formule chimique (H2O, Ca(OH)2, C6H12O6...) -> masse molaire, via le tableau périodique local.",
+  "fichier": "main.py"
+}

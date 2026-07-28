@@ -47,14 +47,6 @@
     "nom_pubchem": "oxidane",
     "nom_saisi": "H2O"
   },
-  "h2o2": {
-    "ambigu": false,
-    "cid_pubchem": 784,
-    "formule": "H2O2",
-    "masse_molaire": 34.015,
-    "nom_pubchem": "hydrogen peroxide",
-    "nom_saisi": "H2O2"
-  },
   "o2": {
     "ambigu": false,
     "cid_pubchem": 977,
@@ -78,14 +70,6 @@
     "masse_molaire": 58.08,
     "nom_pubchem": "propan-2-one",
     "nom_saisi": "acetone"
-  },
-  "tatp": {
-    "ambigu": false,
-    "cid_pubchem": 4380970,
-    "formule": "C9H18O6",
-    "masse_molaire": 222.24,
-    "nom_pubchem": "3,3,6,6,9,9-hexamethyl-1,2,4,5,7,8-hexaoxonane",
-    "nom_saisi": "TATP"
   },
   "water": {
     "ambigu": false,

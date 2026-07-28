@@ -2,5 +2,6 @@ PyQt5>=5.15
 
 # Utilisées uniquement par certains programmes d'exemple :
 numpy>=1.20          # exemple Physique (chute libre)
-matplotlib>=3.5       # exemple Ingénierie (graphique du moment fléchissant)
+matplotlib>=3.5       # exemple Ingénierie (graphique) + Physique (aperçu d'équation)
 requests>=2.28        # data/pubchem_utils.py (requêtes PubChem) + exemple Bilan_reaction_stoechiometrie
+sympy>=1.12            # exemple Physique (Resolveur_equations)

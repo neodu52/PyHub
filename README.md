@@ -35,6 +35,38 @@ Cliquer sur un bouton lance ce programme dans son propre processus Python
 - **📂 Ouvrir le dossier categories/** : ouvre l'explorateur de fichiers
   sur ce dossier, si vous préférez naviguer manuellement.
 
+## Exécutables natifs (C++, .exe, scripts...)
+
+Un dossier de programme n'est plus obligé de contenir un `main.py` : il
+peut contenir directement un exécutable natif (un `.exe` Windows, un
+binaire C++ compilé, un script `.sh`...). Le hub le détecte et le lance
+directement (sans passer par l'interpréteur Python), soit automatiquement
+d'après l'extension (`.exe`, `.bat`, `.cmd`, `.sh`, `.bin`, `.app`, `.out`),
+soit explicitement via `hub_info.json` :
+
+```json
+{
+  "nom_affiche": "Simulation de trajectoire (C++)",
+  "fichier": "simulation.exe",
+  "type": "executable",
+  "arguments": ["--vitesse", "300", "--angle", "45"]
+}
+```
+
+- `"type"` : `"executable"` force un lancement direct ; `"python"` force
+  un lancement via l'interpréteur Python ; si absent, le hub déduit le
+  type à partir de l'extension du fichier.
+- `"arguments"` (optionnel) : liste de chaînes passées en ligne de
+  commande à l'exécutable.
+- Sur Linux/Mac, si le fichier n'a pas le bit exécutable, le hub affiche
+  un message clair vous invitant à faire `chmod +x` dessus.
+
+Pour vos simulations C++ : compilez-les normalement sur votre machine
+(ex: avec `g++` ou Visual Studio), placez l'exécutable résultant dans
+un dossier sous `categories/<Categorie>/`, ajoutez le `hub_info.json`
+ci-dessus (en adaptant `"fichier"` au nom réel de votre binaire), et le
+bouton apparaîtra comme n'importe quel autre programme.
+
 ## Structure du projet
 
 ```
@@ -45,11 +77,15 @@ PyHub/
 ├── templates/
 │   └── template_programme.py    # à copier pour créer un nouveau programme
 ├── data/                         # dossier PARTAGÉ, ignoré par le hub (voir plus bas)
-│   ├── pubchem_utils.py           # module utilitaire : masse molaire d'un composé
-│   └── composes_locale.json       # cache local des composés déjà résolus
+│   ├── pubchem_utils.py           # module utilitaire : masse molaire d'un composé (PubChem)
+│   ├── composes_locale.json       # cache local des composés déjà résolus par PubChem
+│   └── tableau_periodique.json    # les 118 éléments, complet, 100% hors-ligne
 └── categories/
     ├── Physique/
-    │   └── Chute_libre_avec_frottement/
+    │   ├── Chute_libre_avec_frottement/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Resolveur_equations/
     │       ├── main.py
     │       └── hub_info.json
     ├── Chimie/
@@ -57,6 +93,9 @@ PyHub/
     │   │   ├── main.py
     │   │   └── hub_info.json
     │   ├── Quantite_reactif/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   ├── Calculateur_masse_molaire/
     │   │   ├── main.py
     │   │   └── hub_info.json
     │   └── Bilan_reaction_stoechiometrie/
@@ -143,7 +182,8 @@ Dépendance supplémentaire pour ce programme : `requests`
 
 ### `Quantite_reactif` — votre propre calculateur
 
-`categories/Chimie/Quantite_reactif/` à partir d'une masse de produit visée, il
+`categories/Chimie/Quantite_reactif/` est le programme que vous avez
+écrit à partir du template : à partir d'une masse de produit visée, il
 calcule la masse et le volume de deux réactifs. Une seule précision a été
 ajoutée en commentaire dans `calculer()` : le calcul suppose que le
 **produit** a un coefficient de 1 dans l'équation bilan (les coefficients
@@ -151,6 +191,73 @@ des réactifs que vous saisissez doivent alors être exprimés "par mol de
 produit"). Si ce n'est pas le cas dans votre réaction, `Bilan_reaction_stoechiometrie`
 (ci-dessus) gère lui n'importe quels coefficients directement depuis
 l'équation complète.
+
+## Le tableau périodique local (`data/tableau_periodique.json`)
+
+Contrairement aux composés chimiques (trop nombreux pour être stockés à
+l'avance), le tableau périodique est complet et minuscule : 118 éléments
+qui ne changent jamais. Il est donc fourni **entièrement en local**, sans
+connexion Internet ni cache à remplir — pas besoin du pattern PubChem ici.
+
+Pour chaque élément (clé = symbole, ex `"Fe"`) :
+
+```json
+{
+  "numero_atomique": 26,
+  "symbole": "Fe",
+  "nom": "Fer",
+  "masse_molaire": 55.845,
+  "masse_volumique_g_cm3": 7.874,
+  "nombre_protons": 26,
+  "nombre_electrons": 26,
+  "configuration_electronique": {"K": 2, "L": 8, "M": 14, "N": 2},
+  "configuration_electronique_detaillee": "[Ar] 3d6 4s2",
+  "categorie": "métal de transition",
+  "etat_standard": "solide",
+  "point_fusion_C": 1537.85,
+  "point_ebullition_C": 2860.85
+}
+```
+
+Données factuelles publiques (IUPAC / PeriodicTableOfElements.org).
+
+### Exemple : `Calculateur_masse_molaire`
+
+`categories/Chimie/Calculateur_masse_molaire/` illustre l'usage de ce
+fichier : tapez une formule (`H2O`, `Ca(OH)2`, `Fe2O3`, `C6H12O6`,
+`Al2(SO4)3`, `K4[Fe(CN)6]`...), et le programme décompose la formule
+(parenthèses/crochets imbriqués gérés), regarde la masse molaire de
+chaque élément dans `data/tableau_periodique.json`, et affiche le détail
+du calcul par élément ainsi que le total. Aucune requête réseau — même
+principe de partage de données que PubChem, mais 100% hors-ligne car le
+jeu de données est petit et complet.
+
+## Résolveur d'équations symbolique (`categories/Physique/Resolveur_equations`)
+
+Tapez une équation en écriture "clavier" (`E=(1/2)*m*v^2`) ou en LaTeX
+(`E=\frac{1}{2}mv^{2}`, avec ou sans les antislashs — les deux marchent),
+et :
+
+1. **Convertissez** d'une forme à l'autre avec les boutons "Clavier → LaTeX"
+   / "LaTeX → Clavier". Un aperçu typographié (rendu via matplotlib)
+   s'affiche automatiquement.
+2. **Isolez** n'importe quelle variable de l'équation (pas seulement celle
+   du membre de gauche) : choisissez-la dans le menu déroulant et cliquez
+   sur "Isoler cette variable". S'il y a plusieurs solutions (ex : une
+   racine carrée donnant ± une valeur), toutes sont affichées.
+3. **Calculez** : des champs numériques apparaissent automatiquement pour
+   toutes les autres variables de l'équation ; entrez leurs valeurs et
+   cliquez sur "Calculer" pour obtenir la variable isolée.
+
+Prend en charge `\frac{}{}`, `\sqrt{}` (et `\sqrt[n]{}`), les exposants
+`^{}`, les indices `_{}` (ex: `v_0`), `\cdot`/`\times`, et les lettres
+grecques courantes. Utilise sympy pour le calcul symbolique — y compris
+un correctif pour les lettres piégeuses comme `E` (confondue par défaut
+avec le nombre d'Euler) ou `I` (confondue avec l'unité imaginaire), très
+courantes en physique (énergie, intensité) mais toujours traitées ici
+comme de simples variables.
+
+Dépendance supplémentaire : `sympy` (déjà dans `requirements.txt`).
 
 ## Ajouter un nouveau programme
 

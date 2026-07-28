@@ -6,15 +6,30 @@ Logique :
   par catégorie (Physique, Chimie, Ingenierie, Aerospatiale, ou toute autre
   catégorie que vous créez).
 - Chaque catégorie contient un sous-dossier par programme.
-- Chaque dossier de programme contient un fichier main.py (par défaut),
-  et éventuellement un fichier hub_info.json pour personnaliser l'affichage.
-- Cliquer sur le bouton d'un programme le lance dans un processus Python
-  séparé (subprocess), pour que chaque programme ait sa propre fenêtre
-  et son propre cycle de vie, indépendant du hub.
+- Chaque dossier de programme contient un fichier main.py (par défaut) OU
+  un exécutable natif (.exe, script .sh, binaire compilé en C++...), et
+  éventuellement un fichier hub_info.json pour personnaliser l'affichage.
+- Cliquer sur le bouton d'un programme le lance dans un processus séparé
+  (subprocess), pour que chaque programme ait sa propre fenêtre et son
+  propre cycle de vie, indépendant du hub.
 
-Ajouter un nouveau programme = ajouter un dossier + un main.py. Rien à
-modifier dans ce fichier : cliquez sur "Actualiser" (ou appuyez sur F5)
-pour le voir apparaître.
+Ajouter un nouveau programme = ajouter un dossier + un main.py (ou un
+exécutable). Rien à modifier dans ce fichier : cliquez sur "Actualiser"
+(ou appuyez sur F5) pour le voir apparaître.
+
+Format de hub_info.json (toutes les clés sont optionnelles) :
+    {
+        "nom_affiche": "Nom affiché sur le bouton",
+        "description": "Info-bulle au survol du bouton",
+        "fichier": "main.py",           // ou "simulation.exe", "sim.sh"...
+        "type": "python",                // "python" (défaut) ou "executable"
+        "arguments": ["--param", "5"]    // arguments passés au programme
+    }
+
+Détection automatique du type si "type" n'est pas précisé : un fichier
+.py est lancé via l'interpréteur Python ; un fichier .exe/.bat/.sh/.bin/
+.app/.out (ou, sur Linux/Mac, tout fichier avec le bit exécutable) est
+lancé directement comme un programme natif.
 """
 
 import os
@@ -52,6 +67,10 @@ ICONES_CATEGORIES = {
 NOM_FICHIER_INFO = "hub_info.json"          # métadonnées optionnelles d'un programme
 NOM_FICHIER_ENTREE_DEFAUT = "main.py"        # fichier lancé par défaut
 NB_COLONNES_GRILLE = 3
+
+# Extensions reconnues comme "exécutable natif" (lancées directement, sans
+# passer par l'interpréteur Python) lors de la détection automatique.
+EXTENSIONS_EXECUTABLES = {".exe", ".bat", ".cmd", ".sh", ".bin", ".app", ".out"}
 
 
 class HubWindow(QMainWindow):
@@ -224,30 +243,77 @@ class HubWindow(QMainWindow):
     # ------------------------------------------------------------------
     # Exécution des programmes
     # ------------------------------------------------------------------
-    def _lancer_programme(self, dossier_programme, info):
+    def _resoudre_fichier_a_lancer(self, dossier_programme, info):
+        """Détermine quel fichier lancer : le champ "fichier" de hub_info.json
+        s'il existe, sinon le premier .py trouvé, sinon le premier exécutable
+        connu (.exe, .sh, .bat...) trouvé dans le dossier."""
         nom_fichier = info.get("fichier", NOM_FICHIER_ENTREE_DEFAUT)
-        chemin_script = dossier_programme / nom_fichier
+        chemin = dossier_programme / nom_fichier
+        if chemin.exists():
+            return chemin
 
-        if not chemin_script.exists():
-            fichiers_py = sorted(dossier_programme.glob("*.py"))
-            if fichiers_py:
-                chemin_script = fichiers_py[0]
-            else:
-                QMessageBox.warning(
-                    self, "Programme introuvable",
-                    f"Aucun fichier {nom_fichier} (ni aucun .py) trouvé dans :\n{dossier_programme}"
-                )
-                return
+        fichiers_py = sorted(dossier_programme.glob("*.py"))
+        if fichiers_py:
+            return fichiers_py[0]
+
+        for extension in EXTENSIONS_EXECUTABLES:
+            fichiers_exe = sorted(dossier_programme.glob(f"*{extension}"))
+            if fichiers_exe:
+                return fichiers_exe[0]
+
+        return None
+
+    def _est_executable(self, chemin, info):
+        """Décide si `chemin` doit être lancé directement (exécutable natif :
+        .exe, C++ compilé, script shell...) ou via l'interpréteur Python."""
+        type_declare = str(info.get("type", "")).strip().lower()
+        if type_declare == "executable":
+            return True
+        if type_declare == "python":
+            return False
+
+        # Pas de type déclaré explicitement dans hub_info.json : on déduit
+        # à partir de l'extension, puis (sur Linux/Mac) du bit exécutable.
+        if chemin.suffix.lower() == ".py":
+            return False
+        if chemin.suffix.lower() in EXTENSIONS_EXECUTABLES:
+            return True
+        if platform.system() != "Windows" and os.access(chemin, os.X_OK):
+            return True
+        return False
+
+    def _lancer_programme(self, dossier_programme, info):
+        chemin = self._resoudre_fichier_a_lancer(dossier_programme, info)
+        if chemin is None:
+            QMessageBox.warning(
+                self, "Programme introuvable",
+                f"Aucun script Python ni exécutable (.exe, .sh...) trouvé dans :\n{dossier_programme}"
+            )
+            return
+
+        arguments = info.get("arguments", [])
+        if not isinstance(arguments, list):
+            arguments = []
+        arguments = [str(a) for a in arguments]
+
+        if self._est_executable(chemin, info):
+            commande = [str(chemin)] + arguments
+        else:
+            commande = [sys.executable, str(chemin)] + arguments
 
         try:
-            subprocess.Popen(
-                [sys.executable, str(chemin_script)],
-                cwd=str(dossier_programme),
+            subprocess.Popen(commande, cwd=str(dossier_programme))
+        except PermissionError:
+            QMessageBox.critical(
+                self, "Permission refusée",
+                f"Impossible d'exécuter {chemin.name} : permission refusée.\n\n"
+                f"Sur Linux/Mac, rendez le fichier exécutable avec :\n"
+                f"chmod +x \"{chemin}\""
             )
         except Exception as e:
             QMessageBox.critical(
                 self, "Erreur de lancement",
-                f"Impossible de lancer {chemin_script.name} :\n{e}"
+                f"Impossible de lancer {chemin.name} :\n{e}"
             )
 
     def _ouvrir_dossier_categories(self):

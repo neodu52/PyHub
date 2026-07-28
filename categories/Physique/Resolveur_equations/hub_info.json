@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Résolveur d'équations (LaTeX ↔ clavier)",
+  "description": "Convertit LaTeX <-> clavier, isole n'importe quelle variable, calcule sa valeur.",
+  "fichier": "main.py"
+}
