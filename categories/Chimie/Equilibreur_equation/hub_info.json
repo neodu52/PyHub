@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Équilibreur d'équation bilan",
+  "description": "Tapez les réactifs/produits (sans coefficients) et le programme calcule les plus petits entiers qui équilibrent l'équation.",
+  "fichier": "main.py"
+}

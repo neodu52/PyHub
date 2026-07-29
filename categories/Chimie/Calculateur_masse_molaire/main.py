@@ -11,7 +11,6 @@ complet (118 éléments) et tient facilement dans un seul fichier local, donc
 aucune requête réseau n'est nécessaire ici.
 """
 
-import re
 import sys
 from pathlib import Path
 
@@ -22,9 +21,12 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 
-# Le tableau périodique partagé vit dans PyHub/data/tableau_periodique.json.
+# Le tableau périodique et le parseur de formules partagés vivent dans
+# PyHub/data/. On les ajoute au chemin de recherche des modules.
 DOSSIER_HUB = Path(__file__).resolve().parents[3]  # .../PyHub
 CHEMIN_TABLEAU = DOSSIER_HUB / "data" / "tableau_periodique.json"
+sys.path.insert(0, str(DOSSIER_HUB / "data"))
+from formule_utils import parser_formule  # noqa: E402
 
 TITRE_PROGRAMME = "Calculateur de masse molaire"
 DESCRIPTION = (
@@ -42,49 +44,8 @@ def charger_tableau_periodique():
         return json.load(f)
 
 
-# ============================================================
-# Analyse d'une formule chimique (gère les parenthèses/crochets imbriqués)
-# ============================================================
-def parser_formule(formule):
-    """'Ca(OH)2' -> {'Ca': 1, 'O': 2, 'H': 2}"""
-    formule = formule.strip().replace(" ", "")
-    if not formule:
-        raise ValueError("Formule vide.")
-
-    pile = [{}]
-    i = 0
-    n = len(formule)
-    while i < n:
-        c = formule[i]
-        if c in "([":
-            pile.append({})
-            i += 1
-        elif c in ")]":
-            i += 1
-            correspondance = re.match(r"\d+", formule[i:])
-            multiplicateur = int(correspondance.group()) if correspondance else 1
-            i += len(correspondance.group()) if correspondance else 0
-            if len(pile) < 2:
-                raise ValueError("Parenthèse fermante sans parenthèse ouvrante correspondante.")
-            groupe = pile.pop()
-            sommet = pile[-1]
-            for symbole, compte in groupe.items():
-                sommet[symbole] = sommet.get(symbole, 0) + compte * multiplicateur
-        else:
-            correspondance = re.match(r"[A-Z][a-z]?", formule[i:])
-            if not correspondance:
-                raise ValueError(f"Caractère inattendu dans la formule : « {formule[i:]} »")
-            symbole = correspondance.group()
-            i += len(symbole)
-            correspondance_nb = re.match(r"\d+", formule[i:])
-            compte = int(correspondance_nb.group()) if correspondance_nb else 1
-            i += len(correspondance_nb.group()) if correspondance_nb else 0
-            sommet = pile[-1]
-            sommet[symbole] = sommet.get(symbole, 0) + compte
-
-    if len(pile) != 1:
-        raise ValueError("Parenthèse ouvrante non fermée dans la formule.")
-    return pile[0]
+# parser_formule est désormais importé depuis data/formule_utils.py (voir plus haut) :
+# cela évite la duplication avec Equilibreur_equation, qui en a aussi besoin.
 
 
 def calculer_masse_molaire(formule, tableau_periodique):

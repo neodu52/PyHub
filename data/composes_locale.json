@@ -39,6 +39,14 @@
     "nom_pubchem": "oxidane",
     "nom_saisi": "H2O"
   },
+  "h2": {
+    "ambigu": false,
+    "cid_pubchem": 783,
+    "formule": "H2",
+    "masse_molaire": 2.016,
+    "nom_pubchem": "molecular hydrogen",
+    "nom_saisi": "H2"
+  },
   "h2o": {
     "ambigu": false,
     "cid_pubchem": 962,

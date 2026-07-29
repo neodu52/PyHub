@@ -38,6 +38,7 @@ from PyQt5.QtWidgets import (
 DOSSIER_HUB = Path(__file__).resolve().parents[3]  # .../PyHub
 sys.path.insert(0, str(DOSSIER_HUB / "data"))
 import pubchem_utils as pc  # noqa: E402
+from pubchem_autocomplete_widget import ChampRechercheCompose  # noqa: E402
 
 TITRE_PROGRAMME = "Bilan de réaction — stœchiométrie (PubChem)"
 DESCRIPTION = (
@@ -67,6 +68,17 @@ class FenetreProgramme(QWidget):
         desc.setWordWrap(True)
         desc.setStyleSheet("color: #666;")
         layout.addWidget(desc)
+
+        # --- barre de recherche PubChem (façon Google) : tapez "ace" pour voir
+        # "Acetone", "Acetic Acid"... apparaître ; le choix est ajouté à l'équation ---
+        ligne_recherche = QHBoxLayout()
+        ligne_recherche.addWidget(QLabel("🔍 Rechercher un composé :"))
+        self.champ_recherche = ChampRechercheCompose(
+            placeholder="Tapez ex: ace... puis choisissez dans la liste"
+        )
+        self.champ_recherche.compose_choisi.connect(self._on_compose_choisi)
+        ligne_recherche.addWidget(self.champ_recherche, stretch=1)
+        layout.addLayout(ligne_recherche)
 
         # --- saisie de l'équation ---
         ligne_equation = QHBoxLayout()
@@ -122,6 +134,21 @@ class FenetreProgramme(QWidget):
         layout.addWidget(self.bouton_calculer)
 
     # ------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    def _on_compose_choisi(self, nom):
+        """Ajoute le composé choisi dans la barre de recherche à la fin de
+        l'équation en cours de saisie, avec un séparateur '+' si besoin."""
+        texte_actuel = self.champ_equation.text().rstrip()
+        if not texte_actuel:
+            nouveau_texte = nom
+        elif texte_actuel.endswith(("+", "=")):
+            nouveau_texte = f"{texte_actuel} {nom}"
+        else:
+            nouveau_texte = f"{texte_actuel} + {nom}"
+        self.champ_equation.setText(nouveau_texte)
+        self.champ_recherche.clear()
+        self.champ_recherche.setFocus()
+
     def _on_analyser(self):
         texte = self.champ_equation.text()
         try:

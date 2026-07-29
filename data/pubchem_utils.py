@@ -44,6 +44,7 @@ DOSSIER_DATA = Path(__file__).resolve().parent
 CHEMIN_CACHE = DOSSIER_DATA / "composes_locale.json"
 
 PUBCHEM_BASE = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
+PUBCHEM_AUTOCOMPLETE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound"
 PROPRIETES_DEMANDEES = "MolecularWeight,MolecularFormula,IUPACName"
 DELAI_REQUETE_SECONDES = 10
 EN_TETE_HTTP = {"User-Agent": "PyHub-personnel/1.0 (usage non commercial)"}
@@ -179,3 +180,35 @@ def obtenir_proprietes(nom_ou_formule):
     _sauvegarder_cache(cache)
 
     return resultat
+
+
+def rechercher_suggestions(texte_partiel, limite=10):
+    """Auto-complétion façon barre de recherche : renvoie une liste de noms
+    de composés suggérés par PubChem à partir d'un texte partiel (ex: "ace"
+    -> ["Acetone", "Acetic Acid", "Acetaminophen", ...]).
+
+    Utilise le service officiel d'auto-complétion de PubChem :
+    https://pubchem.ncbi.nlm.nih.gov/docs/autocomplete
+
+    Ne lève JAMAIS d'exception : en cas d'échec réseau, de réponse
+    inattendue, ou si `requests` n'est pas installé, renvoie simplement une
+    liste vide. C'est une fonctionnalité de confort (suggestions), pas une
+    donnée critique — un échec silencieux (pas de suggestions) est
+    préférable à une erreur qui interromprait la saisie de l'utilisateur.
+    """
+    texte_partiel = texte_partiel.strip()
+    if len(texte_partiel) < 2 or requests is None:
+        return []
+    url = f"{PUBCHEM_AUTOCOMPLETE_URL}/{texte_partiel}/json"
+    try:
+        reponse = requests.get(
+            url, params={"limit": limite}, headers=EN_TETE_HTTP,
+            timeout=DELAI_REQUETE_SECONDES
+        )
+        if reponse.status_code != 200:
+            return []
+        donnees = reponse.json()
+        termes = donnees.get("dictionary_terms", {}).get("compound", [])
+        return list(termes[:limite])
+    except Exception:
+        return []

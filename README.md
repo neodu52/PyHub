@@ -77,7 +77,9 @@ PyHub/
 ├── templates/
 │   └── template_programme.py    # à copier pour créer un nouveau programme
 ├── data/                         # dossier PARTAGÉ, ignoré par le hub (voir plus bas)
-│   ├── pubchem_utils.py           # module utilitaire : masse molaire d'un composé (PubChem)
+│   ├── pubchem_utils.py           # module utilitaire : masse molaire + recherche PubChem
+│   ├── pubchem_autocomplete_widget.py  # widget PyQt : barre de recherche façon Google
+│   ├── formule_utils.py           # module utilitaire : parsing de formules chimiques
 │   ├── composes_locale.json       # cache local des composés déjà résolus par PubChem
 │   ├── tableau_periodique.json    # les 118 éléments, complet, 100% hors-ligne
 │   └── materiaux.json             # propriétés mécaniques/thermiques de 33 matériaux
@@ -99,7 +101,10 @@ PyHub/
     │   ├── Calculateur_masse_molaire/
     │   │   ├── main.py
     │   │   └── hub_info.json
-    │   └── Bilan_reaction_stoechiometrie/
+    │   ├── Bilan_reaction_stoechiometrie/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Equilibreur_equation/
     │       ├── main.py
     │       └── hub_info.json
     ├── Ingenierie/
@@ -183,6 +188,46 @@ PubChem pour ce composé — sinon, préférez la formule ou le nom anglais.
 
 Dépendance supplémentaire pour ce programme : `requests`
 (déjà dans `requirements.txt`).
+
+### Barre de recherche PubChem (façon Google)
+
+`Bilan_reaction_stoechiometrie` et `Equilibreur_equation` (ci-dessous)
+intègrent tous les deux une vraie barre de recherche : tapez quelques
+lettres (ex : `ace`) et une liste de composés suggérés par PubChem
+apparaît (`Acetone`, `Acetic Acid`, `Acetaminophen`...) — cliquer (ou
+Entrée) sur une suggestion l'ajoute directement à l'équation en cours de
+saisie.
+
+C'est le widget partagé `data/pubchem_autocomplete_widget.py`
+(`ChampRechercheCompose`, une sous-classe de `QLineEdit`) qui gère ça :
+un petit délai (300 ms) après la dernière frappe avant d'interroger le
+service officiel d'auto-complétion de PubChem
+(`pc.rechercher_suggestions`, dans `pubchem_utils.py`), pour éviter de
+lancer une requête à chaque caractère tapé. En cas d'échec réseau, la
+liste de suggestions est simplement vide — ça ne bloque jamais la saisie
+manuelle. Réutilisable dans n'importe quel futur programme :
+
+```python
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "data"))
+from pubchem_autocomplete_widget import ChampRechercheCompose
+
+champ = ChampRechercheCompose()
+champ.compose_choisi.connect(lambda nom: ...)  # appelé quand l'utilisateur choisit une suggestion
+```
+
+### `Equilibreur_equation` — équilibrage automatique
+
+`categories/Chimie/Equilibreur_equation/` prend une équation SANS les
+coefficients (ex : `acetone + O2 = CO2 + H2O`, ou même juste des formules
+`C3H6O + O2 = CO2 + H2O`) et calcule automatiquement les plus petits
+coefficients entiers qui l'équilibrent. Chaque composé est résolu en
+formule (cache local puis PubChem, comme ci-dessus), décomposé en comptes
+d'éléments (`data/formule_utils.py`, désormais partagé avec
+`Calculateur_masse_molaire`), puis le système de conservation des éléments
+est résolu exactement avec le noyau d'une matrice (sympy), mis à l'échelle
+en plus petits entiers positifs. Testé sur plusieurs équations connues
+(combustion de l'acétone, du méthane, du glucose, décomposition du
+chlorate de potassium, neutralisation acide/base...).
 
 ### `Quantite_reactif` — votre propre calculateur
 
