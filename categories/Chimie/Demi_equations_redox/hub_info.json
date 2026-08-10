@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Demi-équations rédox",
+  "description": "Équilibre automatiquement une demi-équation électronique (milieu acide et basique) à partir du couple Ox/Red.",
+  "fichier": "main.py"
+}

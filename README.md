@@ -104,7 +104,10 @@ PyHub/
     │   ├── Bilan_reaction_stoechiometrie/
     │   │   ├── main.py
     │   │   └── hub_info.json
-    │   └── Equilibreur_equation/
+    │   ├── Equilibreur_equation/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Demi_equations_redox/
     │       ├── main.py
     │       └── hub_info.json
     ├── Ingenierie/
@@ -228,6 +231,38 @@ est résolu exactement avec le noyau d'une matrice (sympy), mis à l'échelle
 en plus petits entiers positifs. Testé sur plusieurs équations connues
 (combustion de l'acétone, du méthane, du glucose, décomposition du
 chlorate de potassium, neutralisation acide/base...).
+
+### `Demi_equations_redox` — équilibrage des demi-équations électroniques
+
+`categories/Chimie/Demi_equations_redox/` équilibre automatiquement une
+demi-équation rédox à partir du couple Ox/Red — méthode enseignée au
+lycée/prépa :
+
+1. équilibrer l'élément "squelette" (autre que O, H) entre Ox et Red ;
+   à défaut (aucun autre élément, ex : couple O2/H2O), utiliser O, puis H ;
+2. équilibrer l'oxygène en ajoutant des H2O ;
+3. équilibrer l'hydrogène en ajoutant des H+ ;
+4. équilibrer la charge en ajoutant des électrons e- ;
+5. bonus : conversion automatique en milieu basique (ajout de OH-,
+   combinaison H+ + OH- → H2O, simplification).
+
+Saisissez Ox et Red avec leur charge explicite — `MnO4-`, `Fe3+`,
+`Cr2O7^2-`... Pour un ion polyatomique de charge de magnitude > 1,
+utilisez l'accent circonflexe (`SO4^2-`) : sans lui, un chiffre en fin de
+formule est intrinsèquement ambigu entre indice et charge (`MnO4-` a un
+indice 4 et une charge -1 ; `Fe3+` n'a pas d'indice, juste une charge +3 —
+le programme distingue ces deux cas automatiquement pour les ions
+monoatomiques, mais a besoin du `^` pour les ions polyatomiques de charge
+≥ 2). Détecte aussi si le sens saisi est une réduction ou une oxydation.
+Testé sur 7 couples classiques (MnO4-/Mn2+, Cr2O7^2-/Cr3+, O2/H2O,
+Fe3+/Fe2+, H+/H2, S4O6^2-/S2O3^2-, et le sens inverse Mn2+/MnO4-), acide
+et basique.
+
+Ce programme est volontairement indépendant de PubChem : les couples
+rédox nécessitent la charge ionique explicite, une donnée que les
+propriétés de base de PubChem ne fournissent pas directement — on reste
+donc sur une saisie de formule chargée, cohérente avec ce qu'on écrit à
+la main en cours de chimie.
 
 ### `Quantite_reactif` — votre propre calculateur
 
