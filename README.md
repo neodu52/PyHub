@@ -26,9 +26,20 @@ python main.py
 ```
 
 Une fenêtre s'ouvre avec un onglet par catégorie (dossier dans
-`categories/`) et, dans chaque onglet, un bouton par programme trouvé.
-Cliquer sur un bouton lance ce programme dans son propre processus Python
+`categories/`) et, dans chaque onglet, une carte par programme trouvé.
+Cliquer sur une carte lance ce programme dans son propre processus Python
 (sa propre fenêtre, indépendante du hub).
+
+Les cartes sont disposées avec une **disposition fluide** (comme une page
+web en CSS flex-wrap) : chaque carte a une largeur fixe, et le nombre de
+cartes par ligne s'adapte automatiquement à la largeur de la fenêtre —
+en réduisant la fenêtre, les cartes passent à la ligne suivante au lieu de
+disparaître hors de vue ou d'être coupées. Le nom du programme s'enroule
+lui aussi sur plusieurs lignes si besoin (la carte grandit en hauteur),
+plutôt que d'être tronqué. Cette logique vit dans `DispositionFluide`
+(hub_window.py), une disposition Qt personnalisée réutilisable pour
+n'importe quel autre affichage du hub qui aurait besoin du même
+comportement.
 
 - `F5` ou le bouton **🔄 Actualiser** : rescanne `categories/` sans
   redémarrer (utile juste après avoir ajouté un dossier).
