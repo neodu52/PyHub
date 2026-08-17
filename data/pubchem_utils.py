@@ -42,6 +42,7 @@ except ImportError:
 
 DOSSIER_DATA = Path(__file__).resolve().parent
 CHEMIN_CACHE = DOSSIER_DATA / "composes_locale.json"
+CHEMIN_CACHE_STRUCTURES = DOSSIER_DATA / "structures_3d_locale.json"
 
 PUBCHEM_BASE = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 PUBCHEM_AUTOCOMPLETE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound"
@@ -212,3 +213,69 @@ def rechercher_suggestions(texte_partiel, limite=10):
         return list(termes[:limite])
     except Exception:
         return []
+
+
+def _charger_cache_structures():
+    if not CHEMIN_CACHE_STRUCTURES.exists():
+        return {}
+    try:
+        with open(CHEMIN_CACHE_STRUCTURES, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _sauvegarder_cache_structures(cache):
+    CHEMIN_CACHE_STRUCTURES.parent.mkdir(parents=True, exist_ok=True)
+    with open(CHEMIN_CACHE_STRUCTURES, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def obtenir_structure_3d(cid):
+    """Renvoie (texte_sdf, dimension, source) pour un composé identifié par
+    son CID PubChem :
+        - texte_sdf : le bloc SDF brut (à parser avec data/sdf_utils.py)
+        - dimension : "3d" si un conformère 3D était disponible, "2d" sinon
+          (repli automatique — toutes les molécules n'ont pas de
+          conformère 3D calculé sur PubChem)
+        - source    : "locale" (cache) ou "pubchem"
+
+    Met en cache le résultat localement (structures_3d_locale.json) : la
+    prochaine consultation de ce CID ne nécessite plus de connexion.
+
+    Lève ComposeIntrouvable si aucune structure (ni 3D ni 2D) n'est
+    disponible, ou en cas d'échec réseau.
+    """
+    cle_cache = str(cid)
+    cache = _charger_cache_structures()
+    if cle_cache in cache:
+        entree = cache[cle_cache]
+        return entree["sdf"], entree["dimension"], "locale"
+
+    if requests is None:
+        raise ComposeIntrouvable(
+            "Le module 'requests' n'est pas installé, impossible de "
+            "récupérer une structure 3D depuis PubChem."
+        )
+
+    for dimension in ("3d", "2d"):
+        url = f"{PUBCHEM_BASE}/compound/cid/{cid}/SDF"
+        try:
+            reponse = requests.get(
+                url, params={"record_type": dimension}, headers=EN_TETE_HTTP,
+                timeout=DELAI_REQUETE_SECONDES
+            )
+        except requests.exceptions.RequestException as e:
+            raise ComposeIntrouvable(
+                f"Impossible de contacter PubChem pour récupérer la structure "
+                f"(CID {cid}) : vérifiez votre connexion Internet. Détail : {e}"
+            )
+        if reponse.status_code == 200 and reponse.text.strip():
+            sdf = reponse.text
+            cache[cle_cache] = {"sdf": sdf, "dimension": dimension}
+            _sauvegarder_cache_structures(cache)
+            return sdf, dimension, "pubchem"
+
+    raise ComposeIntrouvable(
+        f"Aucune structure (3D ni 2D) disponible sur PubChem pour le CID {cid}."
+    )

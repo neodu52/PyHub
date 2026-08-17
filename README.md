@@ -88,10 +88,12 @@ PyHub/
 ├── templates/
 │   └── template_programme.py    # à copier pour créer un nouveau programme
 ├── data/                         # dossier PARTAGÉ, ignoré par le hub (voir plus bas)
-│   ├── pubchem_utils.py           # module utilitaire : masse molaire + recherche PubChem
+│   ├── pubchem_utils.py           # module utilitaire : masse molaire + recherche + structure 3D PubChem
 │   ├── pubchem_autocomplete_widget.py  # widget PyQt : barre de recherche façon Google
 │   ├── formule_utils.py           # module utilitaire : parsing de formules chimiques
+│   ├── sdf_utils.py               # module utilitaire : parsing de structures SDF/Molfile
 │   ├── composes_locale.json       # cache local des composés déjà résolus par PubChem
+│   ├── structures_3d_locale.json  # cache local des structures 3D déjà résolues par PubChem
 │   ├── tableau_periodique.json    # les 118 éléments, complet, 100% hors-ligne
 │   └── materiaux.json             # propriétés mécaniques/thermiques de 33 matériaux
 └── categories/
@@ -118,7 +120,10 @@ PyHub/
     │   ├── Equilibreur_equation/
     │   │   ├── main.py
     │   │   └── hub_info.json
-    │   └── Demi_equations_redox/
+    │   ├── Demi_equations_redox/
+    │   │   ├── main.py
+    │   │   └── hub_info.json
+    │   └── Visualiseur_3D/
     │       ├── main.py
     │       └── hub_info.json
     ├── Ingenierie/
@@ -274,6 +279,39 @@ rédox nécessitent la charge ionique explicite, une donnée que les
 propriétés de base de PubChem ne fournissent pas directement — on reste
 donc sur une saisie de formule chargée, cohérente avec ce qu'on écrit à
 la main en cours de chimie.
+
+### `Visualiseur_3D` — structure moléculaire en 3D
+
+`categories/Chimie/Visualiseur_3D/` reprend la même barre de recherche
+PubChem que les programmes ci-dessus, mais affiche la molécule choisie en
+3D au lieu de faire un calcul : atomes en sphères colorées (convention
+CPK — blanc=H, gris foncé=C, bleu=N, rouge=O...), liaisons entre atomes
+(l'épaisseur du trait augmente avec l'ordre de la liaison), rotation à la
+souris (clic-glisser) et zoom (molette), plus une barre d'outils
+matplotlib standard (zoom rectangle, déplacement, enregistrer en image).
+
+Fonctionnement :
+1. Le nom choisi est résolu en CID PubChem (comme les autres programmes,
+   cache local puis PubChem).
+2. Les coordonnées atomiques sont récupérées au format SDF/Molfile
+   (`pc.obtenir_structure_3d`, dans `pubchem_utils.py`) : un conformère 3D
+   si PubChem en a calculé un, sinon repli automatique sur une structure
+   2D (affichée à plat, avec un avertissement clair) — toutes les
+   molécules n'ont pas de conformère 3D disponible. Résultat mis en cache
+   dans `data/structures_3d_locale.json`.
+3. Le bloc SDF est décodé par `data/sdf_utils.py` (parsing minimal du
+   format MDL Molfile V2000 — atomes + liaisons), un nouveau module
+   partagé testé sur un exemple réel (molécule d'eau, distance O-H
+   vérifiée à ~0,96 Å) avant d'être branché à PubChem.
+4. Rendu avec `matplotlib` 3D (`mplot3d`), déjà une dépendance du hub —
+   pas de bibliothèque de rendu 3D supplémentaire (pas de RDKit, pas de
+   moteur OpenGL dédié), ce qui garde l'installation simple, au prix d'un
+   rendu plus schématique qu'un vrai visualiseur moléculaire dédié.
+
+L'acétone est pré-chargée dans `structures_3d_locale.json` (avec une
+géométrie 3D approximative mais chimiquement plausible, longueurs de
+liaison vérifiées), donc l'exemple par défaut du programme s'affiche
+immédiatement, sans connexion.
 
 ### `Quantite_reactif` — votre propre calculateur
 

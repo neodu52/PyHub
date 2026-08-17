@@ -1,0 +1,5 @@
+{
+  "nom_affiche": "Visualiseur de molécules en 3D",
+  "description": "Cherchez une molécule (barre de recherche PubChem) et affichez sa structure 3D interactive.",
+  "fichier": "main.py"
+}

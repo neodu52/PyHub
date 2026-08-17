@@ -1,4 +1,36 @@
 {
+  "(r)-(-)-adnephrine": {
+    "ambigu": false,
+    "cid_pubchem": 5816,
+    "formule": "C9H13NO3",
+    "masse_molaire": 183.2,
+    "nom_pubchem": "4-[(1R)-1-hydroxy-2-(methylamino)ethyl]benzene-1,2-diol",
+    "nom_saisi": "(R)-(-)-Adnephrine"
+  },
+  "4-adnt": {
+    "ambigu": false,
+    "cid_pubchem": 29574,
+    "formule": "C7H7N3O4",
+    "masse_molaire": 197.15,
+    "nom_pubchem": "4-methyl-3,5-dinitroaniline",
+    "nom_saisi": "4-Adnt"
+  },
+  "4-nitrobenzaldehyde": {
+    "ambigu": false,
+    "cid_pubchem": 541,
+    "formule": "C7H5NO3",
+    "masse_molaire": 151.12,
+    "nom_pubchem": "4-nitrobenzaldehyde",
+    "nom_saisi": "4-nitrobenzaldehyde"
+  },
+  "5-nitroisoquinoline": {
+    "ambigu": false,
+    "cid_pubchem": 69085,
+    "formule": "C9H6N2O2",
+    "masse_molaire": 174.16,
+    "nom_pubchem": "5-nitroisoquinoline",
+    "nom_saisi": "5-Nitroisoquinoline"
+  },
   "acetone": {
     "ambigu": false,
     "cid_pubchem": 180,
@@ -6,6 +38,78 @@
     "masse_molaire": 58.08,
     "nom_pubchem": "propan-2-one",
     "nom_saisi": "acetone"
+  },
+  "acide benzoique": {
+    "ambigu": false,
+    "cid_pubchem": 243,
+    "formule": "C7H6O2",
+    "masse_molaire": 122.12,
+    "nom_pubchem": "benzoic acid",
+    "nom_saisi": "Acide benzoique"
+  },
+  "adn 138": {
+    "ambigu": false,
+    "cid_pubchem": 127323,
+    "formule": "C13H9ClN2O4",
+    "masse_molaire": 292.67,
+    "nom_pubchem": "6-chlorospiro[9-oxa-1-azatricyclo[6.3.1.04,12]dodeca-4(12),5,7-triene-3,3'-pyrrolidine]-2,2',5'-trione",
+    "nom_saisi": "Adn 138"
+  },
+  "adn3bo8lsx": {
+    "ambigu": false,
+    "cid_pubchem": 5381920,
+    "formule": "C18H16O6",
+    "masse_molaire": 328.3,
+    "nom_pubchem": "7-hydroxy-2-(3,4,5-trimethoxyphenyl)chromen-4-one",
+    "nom_saisi": "ADN3BO8LSX"
+  },
+  "adn79d536h": {
+    "ambigu": false,
+    "cid_pubchem": 5311051,
+    "formule": "C22H28ClFO4",
+    "masse_molaire": 410.9,
+    "nom_pubchem": "(8S,9R,10S,11S,13S,14S,16S,17R)-17-(2-chloroacetyl)-9-fluoro-11,17-dihydroxy-10,13,16-trimethyl-6,7,8,11,12,14,15,16-octahydrocyclopenta[a]phenanthren-3-one",
+    "nom_saisi": "ADN79D536H"
+  },
+  "alpha-tnt": {
+    "ambigu": false,
+    "cid_pubchem": 8376,
+    "formule": "C7H5N3O6",
+    "masse_molaire": 227.13,
+    "nom_pubchem": "2-methyl-1,3,5-trinitrobenzene",
+    "nom_saisi": "alpha-TNT"
+  },
+  "arn-509": {
+    "ambigu": false,
+    "cid_pubchem": 24872560,
+    "formule": "C21H15F4N5O2S",
+    "masse_molaire": 477.4,
+    "nom_pubchem": "4-[7-[6-cyano-5-(trifluoromethyl)-3-pyridinyl]-8-oxo-6-sulfanylidene-5,7-diazaspiro[3.4]octan-5-yl]-2-fluoro-N-methylbenzamide",
+    "nom_saisi": "ARN-509"
+  },
+  "arnebifuranone": {
+    "ambigu": false,
+    "cid_pubchem": 6438590,
+    "formule": "C18H20O5",
+    "masse_molaire": 316.3,
+    "nom_pubchem": "5-[(Z)-5-(furan-3-yl)-2-methylpent-2-enyl]-2,3-dimethoxycyclohexa-2,5-diene-1,4-dione",
+    "nom_saisi": "Arnebifuranone"
+  },
+  "arnidenediol": {
+    "ambigu": false,
+    "cid_pubchem": 10478550,
+    "formule": "C30H50O2",
+    "masse_molaire": 442.7,
+    "nom_pubchem": "(3S,4aR,6aR,6aR,6bR,8S,8aS,12S,12aR,14aR,14bR)-4,4,6a,6b,8a,12,14b-heptamethyl-11-methylidene-1,2,3,4a,5,6,6a,7,8,9,10,12,12a,13,14,14a-hexadecahydropicene-3,8-diol",
+    "nom_saisi": "Arnidenediol"
+  },
+  "arnolol": {
+    "ambigu": false,
+    "cid_pubchem": 65653,
+    "formule": "C14H23NO3",
+    "masse_molaire": 253.34,
+    "nom_pubchem": "3-amino-1-[4-(2-methoxyethyl)phenoxy]-3-methylbutan-2-ol",
+    "nom_saisi": "Arnolol"
   },
   "co2": {
     "ambigu": false,
@@ -39,6 +143,14 @@
     "nom_pubchem": "oxidane",
     "nom_saisi": "H2O"
   },
+  "glycerin": {
+    "ambigu": false,
+    "cid_pubchem": 753,
+    "formule": "C3H8O3",
+    "masse_molaire": 92.09,
+    "nom_pubchem": "propane-1,2,3-triol",
+    "nom_saisi": "glycerin"
+  },
   "h2o": {
     "ambigu": false,
     "cid_pubchem": 962,
@@ -46,6 +158,14 @@
     "masse_molaire": 18.015,
     "nom_pubchem": "oxidane",
     "nom_saisi": "H2O"
+  },
+  "nitroglycerine": {
+    "ambigu": false,
+    "cid_pubchem": 4510,
+    "formule": "C3H5N3O9",
+    "masse_molaire": 227.09,
+    "nom_pubchem": "1,3-dinitrooxypropan-2-yl nitrate",
+    "nom_saisi": "Nitroglycerine"
   },
   "o2": {
     "ambigu": false,
@@ -70,6 +190,30 @@
     "masse_molaire": 58.08,
     "nom_pubchem": "propan-2-one",
     "nom_saisi": "acetone"
+  },
+  "s-adnadda-m-lr": {
+    "ambigu": false,
+    "cid_pubchem": 6450140,
+    "formule": "C50H74N10O14",
+    "masse_molaire": 1039.2,
+    "nom_pubchem": "(5R,8R,11R,12S,15S,18S,19S,22R)-18-[(1E,3E,5S,6S)-6-acetyloxy-3,5-dimethyl-7-phenylhepta-1,3-dienyl]-15-[3-(diaminomethylideneamino)propyl]-5-(hydroxymethyl)-1,12,19-trimethyl-2-methylidene-8-(2-methylpropyl)-3,6,9,13,16,20,25-heptaoxo-1,4,7,10,14,17,21-heptazacyclopentacosane-11,22-dicarboxylic acid",
+    "nom_saisi": "S-Adnadda-M-LR"
+  },
+  "tntu": {
+    "ambigu": false,
+    "cid_pubchem": 14309593,
+    "formule": "C14H20BF4N3O3",
+    "masse_molaire": 365.13,
+    "nom_pubchem": "[dimethylamino-[(3,5-dioxo-4-azatricyclo[5.2.1.02,6]dec-8-en-4-yl)oxy]methylidene]-dimethylazanium tetrafluoroborate",
+    "nom_saisi": "TNTU"
+  },
+  "trinitrotoluene": {
+    "ambigu": false,
+    "cid_pubchem": 8376,
+    "formule": "C7H5N3O6",
+    "masse_molaire": 227.13,
+    "nom_pubchem": "2-methyl-1,3,5-trinitrobenzene",
+    "nom_saisi": "Trinitrotoluene"
   },
   "water": {
     "ambigu": false,
